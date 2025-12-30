@@ -332,11 +332,10 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 ## 📞 联系方式
 
-- 作者：Your Name
-- 邮箱：your.email@example.com
-- GitHub：[@yourusername](https://github.com/yourusername)
+- 作者：KingKong
+- 邮箱：hunanjingang@gmail.com
 
----
+--- 
 
 <div align="center">
 
