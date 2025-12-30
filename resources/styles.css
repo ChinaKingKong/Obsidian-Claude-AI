@@ -148,6 +148,79 @@
 	background-color: transparent;
 	animation: messageSlideIn 0.2s ease-out;
 	margin-bottom: 4px;
+	position: relative;
+}
+
+/* 复制按钮 - 图标样式 */
+.claude-ai-copy-button {
+	position: absolute;
+	bottom: 8px;
+	right: 8px;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: none;
+	border-radius: 4px;
+	background-color: rgba(0, 0, 0, 0.05);
+	color: #6b7280;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	pointer-events: none;
+	transition: all 0.15s ease;
+	z-index: 10;
+}
+
+.claude-ai-copy-button svg {
+	width: 14px;
+	height: 14px;
+}
+
+.claude-ai-message:hover .claude-ai-copy-button {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.claude-ai-copy-button:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+	color: #374151;
+	transform: scale(1.05);
+}
+
+.claude-ai-copy-button:active {
+	background-color: rgba(0, 0, 0, 0.15);
+	transform: scale(0.95);
+}
+
+/* Toast提示 */
+.claude-ai-toast {
+	position: fixed;
+	bottom: 80px;
+	left: 50%;
+	transform: translateX(-50%) translateY(20px);
+	background-color: #1f2937;
+	color: #ffffff;
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 13px;
+	font-weight: 500;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	opacity: 0;
+	transition: all 0.3s ease;
+	pointer-events: none;
+}
+
+.claude-ai-toast-show {
+	opacity: 1;
+	transform: translateX(-50%) translateY(0);
+}
+
+.claude-ai-toast-hiding {
+	opacity: 0;
+	transform: translateX(-50%) translateY(20px);
 }
 
 @keyframes messageSlideIn {

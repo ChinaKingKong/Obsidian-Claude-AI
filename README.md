@@ -279,25 +279,21 @@ A: 对话自动保存，每次打开侧边栏会自动加载上次的对话。�
 
 ### 已完成 ✅
 
-- [x] 多AI服务商支持
+- [x] 多AI服务商支持（智谱、OpenAI、Claude、通义千问、DeepSeek、Kimi）
 - [x] 实时流式对话
 - [x] 对话历史管理
+- [x] Markdown格式渲染
 - [x] Chatbox风格UI重构
 - [x] 事件驱动架构
 - [x] 通用AI客户端
-
-### 进行中 🚧
-
-- [ ] Skills系统基础框架
-- [ ] SubAgent引擎基础框架
+- [x] 扁平化界面设计
+- [x] 圆形Logo图标
+- [x] 响应式消息布局
 
 ### 计划中 📋
 
-- [ ] 预定义Skills实现
-- [ ] 自定义Skills配置
-- [ ] SubAgent任务分解
-- [ ] SubAgent并行执行
-- [ ] 流式输出SubAgent
+- [ ] Skills系统
+- [ ] SubAgent并行引擎
 - [ ] 对话历史导出
 - [ ] 多语言UI
 - [ ] 主题定制

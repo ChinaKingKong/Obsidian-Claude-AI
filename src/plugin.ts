@@ -25,6 +25,7 @@ export class ClaudeAIPlugin {
 	private saveDataFn?: (data: any) => Promise<void>;
 	private addSettingTabFn?: (tab: SettingsTab) => void;
 	private addRibbonIconFn?: (iconId: string, iconTitle: string, callback: () => void) => HTMLElement;
+	private cachedData: any = {}; // 缓存完整数据（settings + conversations）
 
 	constructor(
 		private app: App,
@@ -257,38 +258,51 @@ export class ClaudeAIPlugin {
 	 */
 	async loadSettings() {
 		if (this.loadDataFn) {
-			const savedSettings = await this.loadDataFn();
-			if (savedSettings) {
-				this.settings = { ...DEFAULT_SETTINGS, ...savedSettings };
+			const savedData = await this.loadDataFn();
+			if (savedData) {
+				// 缓存完整数据
+				this.cachedData = savedData;
+
+				// 提取settings部分
+				if (savedData.settings) {
+					this.settings = { ...DEFAULT_SETTINGS, ...savedData.settings };
+				} else {
+					// 兼容旧格式（直接是settings对象）
+					this.settings = { ...DEFAULT_SETTINGS, ...savedData };
+					this.cachedData = { settings: this.settings };
+				}
 			}
 		}
 	}
 
 	/**
-	 * 保存设置
+	 * 保存设置（同时保存settings和conversations）
 	 */
 	async saveSettings() {
 		if (this.saveDataFn) {
-			await this.saveDataFn(this.settings);
+			// 更新cachedData中的settings部分
+			this.cachedData.settings = this.settings;
+			// 保存完整数据
+			await this.saveDataFn(this.cachedData);
 		}
 	}
 
 	/**
-	 * 加载数据（委托给 wrapper）
+	 * 加载数据（返回缓存的完整数据）
 	 */
 	async loadData(): Promise<any> {
-		if (this.loadDataFn) {
-			return await this.loadDataFn();
-		}
-		return null;
+		return this.cachedData;
 	}
 
 	/**
-	 * 保存数据（委托给 wrapper）
+	 * 保存数据（更新conversations部分并保存完整数据）
 	 */
 	async saveData(data: any): Promise<void> {
 		if (this.saveDataFn) {
-			await this.saveDataFn(data);
+			// 更新cachedData中的conversations部分
+			this.cachedData = { ...this.cachedData, ...data };
+			// 保存完整数据
+			await this.saveDataFn(this.cachedData);
 		}
 	}
 

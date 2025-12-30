@@ -398,6 +398,27 @@ export class ChatView extends ItemView {
 			messageEl.addClass('streaming');
 		}
 
+		// 为AI消息添加复制按钮
+		if (message.role === 'assistant') {
+			const copyButton = messageEl.createEl('button', {
+				cls: 'claude-ai-copy-button'
+			});
+			copyButton.type = 'button';
+			copyButton.setAttribute('aria-label', '复制消息');
+			copyButton.innerHTML = `
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+					<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+				</svg>
+			`;
+
+			// 复制按钮点击事件
+			copyButton.addEventListener('click', async () => {
+				await this.copyToClipboard(message.content);
+				this.showToast('复制成功');
+			});
+		}
+
 		// 内容容器
 		const content = messageEl.createDiv('claude-ai-message-content');
 
@@ -487,6 +508,59 @@ export class ChatView extends ItemView {
 			console.warn('创建新对话失败:', error);
 		}
 		this.messageList.empty();
+	}
+
+	/**
+	 * 复制到剪贴板
+	 */
+	private async copyToClipboard(text: string): Promise<void> {
+		try {
+			await navigator.clipboard.writeText(text);
+		} catch (error) {
+			// 降级方案：使用传统的复制方法
+			const textArea = document.createElement('textarea');
+			textArea.value = text;
+			textArea.style.position = 'fixed';
+			textArea.style.opacity = '0';
+			document.body.appendChild(textArea);
+			textArea.select();
+			try {
+				document.execCommand('copy');
+			} catch (err) {
+				console.error('复制失败:', err);
+			}
+			document.body.removeChild(textArea);
+		}
+	}
+
+	/**
+	 * 显示Toast提示
+	 */
+	private showToast(message: string): void {
+		// 移除已存在的Toast
+		const existingToast = this.containerEl.querySelector('.claude-ai-toast');
+		if (existingToast) {
+			existingToast.remove();
+		}
+
+		// 创建新Toast
+		const toast = this.containerEl.createDiv('claude-ai-toast');
+	toast.textContent = message;
+		this.containerEl.appendChild(toast);
+
+		// 触发动画（使用requestAnimationFrame确保class生效）
+		requestAnimationFrame(() => {
+			toast.addClass('claude-ai-toast-show');
+		});
+
+		// 自动移除
+		setTimeout(() => {
+			toast.removeClass('claude-ai-toast-show');
+			toast.addClass('claude-ai-toast-hiding');
+			setTimeout(() => {
+				toast.remove();
+			}, 300);
+		}, 2000);
 	}
 
 	/**
