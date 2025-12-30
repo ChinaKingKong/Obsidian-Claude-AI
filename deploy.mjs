@@ -37,18 +37,13 @@ fs.copyFileSync(
 fs.chmodSync(path.join(pluginDir, 'manifest.json'), 0o644);
 console.log('  ✅ manifest.json');
 
-// 确保resources目录存在并复制styles.css
-const resourcesDir = path.join(pluginDir, 'resources');
-if (!fs.existsSync(resourcesDir)) {
-	fs.mkdirSync(resourcesDir, { recursive: true });
-}
-
+// 复制styles.css到根目录（Obsidian要求）
 fs.copyFileSync(
 	path.join(sourceDir, 'resources', 'styles.css'),
-	path.join(resourcesDir, 'styles.css')
+	path.join(pluginDir, 'styles.css')
 );
-fs.chmodSync(path.join(resourcesDir, 'styles.css'), 0o644);
-console.log('  ✅ resources/styles.css');
+fs.chmodSync(path.join(pluginDir, 'styles.css'), 0o644);
+console.log('  ✅ styles.css');
 
 console.log('\n✅ 部署完成！');
 console.log('\n📝 下一步：');

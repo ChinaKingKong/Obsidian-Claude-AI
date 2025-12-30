@@ -1,16 +1,22 @@
-import { ItemView, WorkspaceLeaf } from 'obsidian';
+import { ItemView, WorkspaceLeaf, MarkdownRenderer, Component } from 'obsidian';
 import { ClaudeAIPlugin } from '../../plugin';
 import { ChatMessage } from '../../types';
+import { LOGO_BASE64 } from '../../logo-base64';
 
 /**
  * Claude AI 聊天视图
- * 侧边栏中显示的聊天界面
+ * 基于 Chatbox 的设计思路重新实现
  */
 export class ChatView extends ItemView {
 	private plugin: ClaudeAIPlugin;
 	private chatContainer: HTMLElement;
 	private inputContainer: HTMLElement;
 	private messageList: HTMLElement;
+	private textareaElement: HTMLTextAreaElement;
+	private sendButtonElement: HTMLButtonElement;
+	private menuButtonElement: HTMLButtonElement;
+	private dropdownMenu: HTMLElement;
+	private isSending: boolean = false;
 
 	constructor(leaf: WorkspaceLeaf, plugin: ClaudeAIPlugin) {
 		super(leaf);
@@ -42,23 +48,28 @@ export class ChatView extends ItemView {
 	 * 渲染视图
 	 */
 	async onOpen() {
-		this.containerEl.empty();
+		try {
+			this.containerEl.empty();
+			this.containerEl.addClass('claude-ai-view');
 
-		// 创建主容器
-		this.chatContainer = this.containerEl.createDiv('claude-ai-chat-container');
+			// 创建主容器
+			this.chatContainer = this.containerEl.createDiv('claude-ai-chat-container');
 
-		// 创建头部
-		this.createHeader();
+			// 创建头部
+			this.createHeader();
 
-		// 创建消息列表
-		this.messageList = this.chatContainer.createDiv('claude-ai-message-list');
+			// 创建消息列表
+			this.messageList = this.chatContainer.createDiv('claude-ai-message-list');
 
-		// 创建输入区域
-		this.inputContainer = this.chatContainer.createDiv('claude-ai-input-container');
-		this.createInputArea();
+			// 创建输入区域
+			this.inputContainer = this.chatContainer.createDiv('claude-ai-input-container');
+			this.createInputArea();
 
-		// 加载历史消息
-		await this.loadMessages();
+			// 加载历史消息
+			await this.loadMessages();
+		} catch (error) {
+			console.error('ChatView onOpen 错误:', error);
+		}
 	}
 
 	/**
@@ -66,110 +77,193 @@ export class ChatView extends ItemView {
 	 */
 	async onClose() {
 		// 清理资源
+		this.isSending = false;
 	}
 
 	/**
 	 * 创建头部
-	 * @private
 	 */
-	private createHeader() {
+	private createHeader(): void {
 		const header = this.chatContainer.createDiv('claude-ai-header');
 
-		// 标题
-		const title = header.createEl('h2', { text: 'Claude AI Assistant' });
+		// 左侧：Logo、标题和状态
+		const headerLeft = header.createDiv('claude-ai-header-left');
 
-		// 操作按钮
-		const actions = header.createDiv('claude-ai-header-actions');
+		const titleGroup = headerLeft.createDiv('claude-ai-title-group');
 
-		// 新对话按钮
-		const newChatBtn = actions.createEl('button', {
-			text: '新对话',
-			cls: 'claude-ai-btn'
-		});
-		newChatBtn.onclick = () => this.startNewChat();
+		// AI Logo
+		const logoContainer = titleGroup.createDiv('claude-ai-logo-container');
+		const logoImg = logoContainer.createEl('img');
+		logoImg.addClass('claude-ai-logo');
+		// 使用Base64编码的图片
+		logoImg.src = `data:image/png;base64,${LOGO_BASE64}`;
+		logoImg.alt = 'Claude AI Logo';
 
-		// Skills按钮
-		const skillsBtn = actions.createEl('button', {
-			text: 'Skills',
-			cls: 'claude-ai-btn'
-		});
-		skillsBtn.onclick = () => this.openSkillsPanel();
+		const title = titleGroup.createEl('h2', { text: 'Obsidian Claude AI Assistant' });
+
+		// 状态信息
+		const statusInfo = headerLeft.createDiv('claude-ai-status-info');
+		statusInfo.innerHTML = `
+			<span class="claude-ai-status-item">
+				<span class="claude-ai-status-dot"></span>
+				<span>就绪</span>
+			</span>
+		`;
 	}
 
 	/**
 	 * 创建输入区域
-	 * @private
 	 */
-	private createInputArea() {
-		// 文本输入框
-		const textarea = this.inputContainer.createEl('textarea', {
-			placeholder: '输入消息...',
+	private createInputArea(): void {
+		// 创建输入区域容器（包含输入框和底部栏）
+		const inputWrapper = this.inputContainer.createDiv('claude-ai-input-wrapper');
+
+		// 输入框
+		this.textareaElement = inputWrapper.createEl('textarea', {
+			placeholder: '给 Claude 发送消息...',
 			cls: 'claude-ai-input'
 		});
 
-		// 按钮容器
-		const buttonContainer = this.inputContainer.createDiv('claude-ai-button-container');
+		// 底部栏：左侧标签 + 右侧发送按钮
+		const bottomBar = inputWrapper.createDiv('claude-ai-bottom-bar');
+
+		// 左侧：模型和思考模式标签
+		const tagsContainer = bottomBar.createDiv('claude-ai-tags-container');
+
+		const settings = this.plugin.getSettings();
+		const providerName = this.getProviderDisplayName(settings.provider);
+
+		tagsContainer.innerHTML = `
+			<span class="claude-ai-status-tag">
+				<span class="claude-ai-status-icon">⚡</span>
+				${providerName}
+			</span>
+			<span class="claude-ai-status-tag">
+				<span class="claude-ai-status-icon">💭</span>
+				思考模式
+			</span>
+		`;
+
+		// 占据剩余空间
+		const spacer = bottomBar.createSpan();
+		spacer.style.flex = '1';
 
 		// 发送按钮
-		const sendBtn = buttonContainer.createEl('button', {
-			text: '发送',
-			cls: 'claude-ai-btn claude-ai-btn-primary'
+		this.sendButtonElement = bottomBar.createEl('button', {
+			cls: 'claude-ai-send-button'
 		});
-		sendBtn.onclick = () => this.sendMessage(textarea.value);
+		this.sendButtonElement.type = 'button';
+		this.sendButtonElement.setAttribute('disabled', 'true');
+		this.sendButtonElement.innerHTML = `
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="22" y1="2" x2="11" y2="13"></line>
+				<polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+			</svg>
+		`;
 
-		// SubAgent按钮
-		const subAgentBtn = buttonContainer.createEl('button', {
-			text: 'SubAgent并行',
-			cls: 'claude-ai-btn claude-ai-btn-secondary'
+		// 绑定事件处理器
+		this.bindEvents();
+	}
+
+	/**
+	 * 获取提供商显示名称
+	 */
+	private getProviderDisplayName(provider: any): string {
+		const names: Record<string, string> = {
+			'zhipu': '智谱 GLM',
+			'openai': 'GPT-4',
+			'anthropic': 'Claude',
+			'qwen': '通义千问',
+			'deepseek': 'DeepSeek',
+			'moonshot': 'Kimi'
+		};
+		return names[provider] || 'AI';
+	}
+
+	/**
+	 * 绑定事件处理器
+	 */
+	private bindEvents(): void {
+		// 发送按钮点击
+		this.sendButtonElement.addEventListener('click', () => {
+			this.handleSendButtonClick();
 		});
-		subAgentBtn.onclick = () => this.startSubAgentTask(textarea.value);
 
 		// 回车发送
-		textarea.addEventListener('keydown', (e) => {
-			if (e.key === 'Enter' && !e.shiftKey) {
-				e.preventDefault();
-				this.sendMessage(textarea.value);
-			}
+		this.textareaElement.addEventListener('keydown', (e) => {
+			this.handleKeyDown(e);
+		});
+
+		// 输入变化
+		this.textareaElement.addEventListener('input', () => {
+			this.handleInputChange();
 		});
 	}
 
 	/**
-	 * 加载历史消息
-	 * @private
+	 * 处理发送按钮点击
 	 */
-	private async loadMessages() {
-		const store = this.plugin.getConversationStore();
-		const session = store.getCurrentSession();
+	private handleSendButtonClick(): void {
+		const content = this.textareaElement.value.trim();
+		if (content && !this.isSending) {
+			this.sendMessage(content);
+		}
+	}
 
-		if (session) {
-			session.messages.forEach(msg => {
-				this.appendMessageToUI(msg);
-			});
+	/**
+	 * 处理键盘事件
+	 */
+	private handleKeyDown(e: KeyboardEvent): void {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			const content = this.textareaElement.value.trim();
+			if (content && !this.isSending) {
+				this.sendMessage(content);
+			}
+		}
+	}
+
+	/**
+	 * 处理输入变化
+	 */
+	private handleInputChange(): void {
+		const hasContent = this.textareaElement.value.trim().length > 0;
+		if (hasContent) {
+			this.sendButtonElement.removeAttribute('disabled');
+		} else {
+			this.sendButtonElement.setAttribute('disabled', 'true');
 		}
 	}
 
 	/**
 	 * 发送消息
 	 */
-	private async sendMessage(content: string) {
-		if (!content.trim()) {
+	private async sendMessage(content: string): Promise<void> {
+		if (!content.trim() || this.isSending) {
 			return;
 		}
 
+		// 获取客户端
 		const client = this.plugin.getApiClient();
 		if (!client) {
-			this.showErrorMessage('请先配置API Key');
+			this.showConfigError();
 			return;
 		}
 
-		// 添加用户消息
-		const userMessage: ChatMessage = {
+		// 设置发送状态
+		this.isSending = true;
+		this.updateSendButtonState();
+
+		// 清空输入框
+		this.textareaElement.value = '';
+		this.sendButtonElement.setAttribute('disabled', 'true');
+
+		// 添加用户消息到UI
+		this.appendMessageToUI({
 			role: 'user',
 			content,
 			timestamp: Date.now()
-		};
-
-		this.appendMessageToUI(userMessage);
+		});
 
 		// 创建助手消息占位符
 		const assistantMessage: ChatMessage = {
@@ -178,16 +272,70 @@ export class ChatView extends ItemView {
 			timestamp: Date.now(),
 			isStreaming: true
 		};
-
 		this.appendMessageToUI(assistantMessage);
 
 		try {
-			// 获取历史消息作为上下文
+			// 获取历史消息
+			const messages = await this.buildMessageHistory(content);
+
+			// 流式调用
+			let fullResponse = '';
+			await client.sendMessageStream(messages, {
+				onChunk: (chunk: string) => {
+					fullResponse += chunk;
+					this.updateLastMessage(fullResponse);
+				}
+			});
+
+			// 完成流式传输
+			assistantMessage.content = fullResponse;
+			assistantMessage.isStreaming = false;
+			this.updateLastMessage(fullResponse, false);
+
+			// 保存到历史
+			try {
+				const store = this.plugin.getConversationStore();
+				if (store) {
+					// 确保有活动会话
+					let currentSession = store.getCurrentSession();
+					if (!currentSession) {
+						store.createSession();
+						currentSession = store.getCurrentSession();
+					}
+
+					if (currentSession) {
+						store.addMessage({ role: 'user', content, timestamp: Date.now() });
+						store.addMessage(assistantMessage);
+					}
+				}
+			} catch (saveError) {
+				// 静默处理保存错误，不影响对话显示
+			}
+
+		} catch (error) {
+			const errorMsg = error instanceof Error ? error.message : '发送失败';
+			this.updateLastMessage(`❌ ${errorMsg}`, false);
+		} finally {
+			// 重置发送状态
+			this.isSending = false;
+			this.updateSendButtonState();
+		}
+	}
+
+	/**
+	 * 构建消息历史
+	 */
+	private async buildMessageHistory(userContent: string): Promise<Array<{ role: 'user' | 'assistant' | 'system'; content: string }>> {
+		const messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = [];
+
+		try {
 			const store = this.plugin.getConversationStore();
+			if (!store) {
+				// 如果 store 不存在，直接返回当前消息
+				return [{ role: 'user', content: userContent }];
+			}
+
 			const session = store.getCurrentSession();
-
-			const messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = [];
-
 			if (session) {
 				session.messages.forEach(msg => {
 					messages.push({
@@ -196,129 +344,84 @@ export class ChatView extends ItemView {
 					});
 				});
 			}
-
-			messages.push({ role: 'user', content });
-
-			// 流式调用
-			const response = await client.sendMessageStream(messages, {
-				onChunk: (chunk) => {
-					this.updateLastMessage(chunk);
-				}
-			});
-
-			// 完成流式传输
-			assistantMessage.content = response;
-			assistantMessage.isStreaming = false;
-			this.updateLastMessage(response, false);
-
-			// 保存到历史
-			store.addMessage(userMessage);
-			store.addMessage(assistantMessage);
 		} catch (error) {
-			const errorMsg = error instanceof Error ? error.message : '发送失败';
-			this.showErrorMessage(errorMsg);
-			this.updateLastMessage(`❌ ${errorMsg}`, false);
+			console.warn('加载历史消息失败:', error);
+			// 加载失败不影响新消息发送
+		}
+
+		messages.push({ role: 'user', content: userContent });
+
+		return messages;
+	}
+
+	/**
+	 * 更新发送按钮状态
+	 */
+	private updateSendButtonState(): void {
+		if (this.isSending) {
+			this.sendButtonElement.setAttribute('disabled', 'true');
+			this.sendButtonElement.addClass('sending');
+		} else {
+			this.sendButtonElement.removeClass('sending');
+			this.handleInputChange();
 		}
 	}
 
 	/**
-	 * 启动新对话
-	 * @private
+	 * 加载历史消息
 	 */
-	private startNewChat() {
-		const store = this.plugin.getConversationStore();
-		store.createSession();
-		this.messageList.empty();
-	}
-
-	/**
-	 * 打开Skills面板
-	 * @private
-	 */
-	private openSkillsPanel() {
-		// TODO: 实现Skills面板
-		this.showErrorMessage('Skills面板开发中...');
-	}
-
-	/**
-	 * 启动SubAgent任务
-	 * @private
-	 */
-	private async startSubAgentTask(taskDescription: string) {
-		if (!taskDescription.trim()) {
-			return;
-		}
-
+	private async loadMessages(): Promise<void> {
 		try {
-			const executor = this.plugin.getParallelExecutor();
-			const result = await executor.decomposeAndExecute(taskDescription);
+			const store = this.plugin.getConversationStore();
+			if (!store) {
+				return;
+			}
 
-			// 显示结果
-			this.appendMessageToUI({
-				role: 'assistant',
-				content: this.formatAggregatedResult(result),
-				timestamp: Date.now()
-			});
+			const session = store.getCurrentSession();
+			if (session) {
+				session.messages.forEach(msg => {
+					this.appendMessageToUI(msg);
+				});
+			}
 		} catch (error) {
-			this.showErrorMessage(error instanceof Error ? error.message : 'SubAgent执行失败');
+			console.warn('加载历史消息失败:', error);
 		}
-	}
-
-	/**
-	 * 格式化聚合结果
-	 * @private
-	 */
-	private formatAggregatedResult(result: any): string {
-		return `## SubAgent执行结果
-
-**总计**: ${result.totalTasks}个任务
-**成功**: ${result.successfulTasks}个
-**失败**: ${result.failedTasks}个
-**总耗时**: ${result.totalExecutionTime}ms
-
----
-
-### 合并结果
-
-${result.mergedContent || '无'}`;
 	}
 
 	/**
 	 * 添加消息到UI
-	 * @private
 	 */
-	private appendMessageToUI(message: ChatMessage) {
+	private appendMessageToUI(message: ChatMessage): void {
 		const messageEl = this.messageList.createDiv('claude-ai-message');
 		messageEl.addClass(`claude-ai-message-${message.role}`);
+		if (message.isStreaming) {
+			messageEl.addClass('streaming');
+		}
 
-		// 头部
-		const header = messageEl.createDiv('claude-ai-message-header');
-		header.createEl('span', {
-			text: message.role === 'user' ? '你' : 'Claude'
-		});
-
-		// 内容
+		// 内容容器
 		const content = messageEl.createDiv('claude-ai-message-content');
-		content.createEl('p', { text: message.content });
+
+		// 渲染Markdown内容
+		this.renderMarkdown(content, message.content, message.isStreaming);
 
 		// 滚动到底部
-		this.messageList.scrollTop = this.messageList.scrollHeight;
+		this.scrollToBottom();
 	}
 
 	/**
 	 * 更新最后一条消息
-	 * @private
 	 */
-	private updateLastMessage(content: string, isStreaming: boolean = true) {
+	private updateLastMessage(content: string, isStreaming: boolean = true): void {
 		const lastMessage = this.messageList.lastElementChild;
 		if (!lastMessage) {
 			return;
 		}
 
-		const contentEl = lastMessage.querySelector('.claude-ai-message-content');
+		const contentEl = lastMessage.querySelector('.claude-ai-message-content') as HTMLElement;
 		if (contentEl) {
 			contentEl.empty();
-			contentEl.createEl('p', { text: content });
+			// 渲染Markdown内容
+			this.renderMarkdown(contentEl, content, isStreaming);
 		}
 
 		if (!isStreaming) {
@@ -326,15 +429,74 @@ ${result.mergedContent || '无'}`;
 		}
 
 		// 滚动到底部
+		this.scrollToBottom();
+	}
+
+	/**
+	 * 渲染Markdown内容
+	 */
+	private renderMarkdown(container: HTMLElement, content: string, isStreaming: boolean = false): void {
+		if (!content || content.trim() === '') {
+			container.createEl('p', { text: '...' });
+			return;
+		}
+
+		// 流式输出时使用简单文本显示（性能优化）
+		if (isStreaming) {
+			container.createEl('p', { text: content });
+			return;
+		}
+
+		// 完成后使用Markdown渲染
+		MarkdownRenderer.renderMarkdown(
+			content,
+			container,
+			this.plugin.getManifest().id,
+			new Component()
+		);
+	}
+
+	/**
+	 * 滚动到底部
+	 */
+	private scrollToBottom(): void {
 		this.messageList.scrollTop = this.messageList.scrollHeight;
 	}
 
 	/**
-	 * 显示错误消息
-	 * @private
+	 * 显示配置错误
 	 */
-	private showErrorMessage(message: string) {
-		// TODO: 实现更好的错误提示
-		console.error('Claude AI错误:', message);
+	private showConfigError(): void {
+		this.appendMessageToUI({
+			role: 'assistant',
+			content: '⚠️ 请先在设置中配置API Key',
+			timestamp: Date.now()
+		});
+	}
+
+	/**
+	 * 处理新对话
+	 */
+	private handleNewChat(): void {
+		try {
+			const store = this.plugin.getConversationStore();
+			if (store) {
+				store.createSession();
+			}
+		} catch (error) {
+			console.warn('创建新对话失败:', error);
+		}
+		this.messageList.empty();
+	}
+
+	/**
+	 * 处理打开 Skills 面板
+	 */
+	private handleOpenSkills(): void {
+		this.appendMessageToUI({
+			role: 'assistant',
+			content: 'Skills面板开发中...',
+			timestamp: Date.now()
+		});
 	}
 }
