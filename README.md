@@ -298,10 +298,6 @@ A: 每个服务商支持不同模型，详见上方"支持的AI服务商"表格�
 - [ ] 主题定制
 - [ ] 更多AI服务商
 
-## 🤝 贡献
-
-欢迎贡献！请查看[CONTRIBUTING.md](CONTRIBUTING.md)
-
 ### 贡献步骤
 
 1. Fork本仓库
@@ -309,10 +305,6 @@ A: 每个服务商支持不同模型，详见上方"支持的AI服务商"表格�
 3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启Pull Request
-
-## 📄 许可证
-
-MIT License - 详见 [LICENSE](LICENSE) 文件
 
 ## 🙏 致谢
 
