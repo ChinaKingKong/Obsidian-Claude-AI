@@ -1,0 +1,16 @@
+# Obsidian
+.obsidian/
+main.js
+main.js.map
+*.log
+
+# Node
+node_modules/
+package-lock.json
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

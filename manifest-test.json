@@ -1,0 +1,10 @@
+{
+  "id": "test-plugin",
+  "name": "Test Plugin",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "A simple test plugin",
+  "author": "Test",
+  "authorUrl": "https://example.com",
+  "isDesktopOnly": false
+}

@@ -1,0 +1,11 @@
+{
+  "id": "obsidian-claude-ai",
+  "name": "Claude AI Assistant",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "在Obsidian中嵌入Claude AI，支持Skills和SubAgent多线程并行处理",
+  "author": "Your Name",
+  "authorUrl": "https://github.com/yourusername",
+  "fundingUrl": "https://github.com/yourusername/obsidian-claude-ai",
+  "isDesktopOnly": false
+}
