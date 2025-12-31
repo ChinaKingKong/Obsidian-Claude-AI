@@ -27,7 +27,7 @@
 - **快捷设置入口**：顶部齿轮图标直接打开设置
 - **响应式设计**：完美适配不同屏幕尺寸
 
-![Demo View](src/assets/demo-view.png)
+![Demo View](src/assets/plugin_view.png)
 
 ### 🤖 多 AI 服务商支持
 
