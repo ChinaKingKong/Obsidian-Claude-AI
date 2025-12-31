@@ -97,9 +97,13 @@ export class SettingsTab extends PluginSettingTab {
 		// 当前服务商的API Key
 		new Setting(containerEl)
 			.setName(`${t(`providers.${currentProvider}` as any)} API Key`)
-			.setDesc(`Enter your ${t(`providers.${currentProvider}` as any)} API Key (or use env var: ${AI_PROVIDERS[currentProvider].envKey})`)
+			.setDesc(
+				t('settings.enterYourProviderApiKey')
+					.replace('{provider}', t(`providers.${currentProvider}` as any))
+					.replace('{envKey}', AI_PROVIDERS[currentProvider].envKey)
+			)
 			.addText(text => text
-				.setPlaceholder('Enter API Key')
+				.setPlaceholder(t('settings.enterApiKey'))
 				.setValue(settings.apiKeys[currentProvider] || '')
 				.onChange(async (value) => {
 					const newApiKeys = { ...settings.apiKeys };
@@ -131,7 +135,7 @@ export class SettingsTab extends PluginSettingTab {
 				.setName(`${t(`providers.${provider}` as any)} API Key`)
 				.setDesc(`${t('settings.fromEnv')}: ${config.envKey}`)
 				.addText(text => text
-					.setPlaceholder('Enter API Key (optional)')
+					.setPlaceholder(t('settings.enterApiKeyOptional'))
 					.setValue(settings.apiKeys[provider] || '')
 					.onChange(async (value) => {
 						const newApiKeys = { ...settings.apiKeys };
@@ -144,7 +148,7 @@ export class SettingsTab extends PluginSettingTab {
 		// API来源显示
 		new Setting(containerEl)
 			.setName(t('settings.currentApiSource'))
-			.setDesc('Display current API Key source')
+			.setDesc(t('settings.currentApiSourceDesc'))
 			.addText(text => text
 				.setValue(t('settings.checking'))
 				.setDisabled(true)
@@ -246,8 +250,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 预定义Skills列表
 		new Setting(containerEl)
-			.setName('预定义Skills')
-			.setDesc('可用的预定义Skills')
+			.setName(t('settings.predefinedSkills'))
+			.setDesc(t('settings.predefinedSkillsDesc'))
 			.then(setting => {
 				predefinedSkills.forEach(skill => {
 					setting.descEl.createEl('div', {
@@ -259,10 +263,10 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 自定义Skills管理
 		new Setting(containerEl)
-			.setName('自定义Skills')
-			.setDesc('管理你的自定义Skills')
+			.setName(t('settings.customSkills'))
+			.setDesc(t('settings.customSkillsDesc'))
 			.addButton(button => button
-				.setButtonText('添加自定义Skill')
+				.setButtonText(t('settings.addCustomSkill'))
 				.onClick(() => {
 					this.showAddSkillDialog();
 				})
@@ -274,7 +278,7 @@ export class SettingsTab extends PluginSettingTab {
 
 		if (customSkills.length > 0) {
 			new Setting(containerEl)
-				.setName('已添加的自定义Skills')
+				.setName(t('settings.addedCustomSkills'))
 				.then(setting => {
 					customSkills.forEach(skill => {
 						const skillEl = setting.descEl.createEl('div', {
@@ -285,7 +289,7 @@ export class SettingsTab extends PluginSettingTab {
 						skillEl.createEl('p', { text: skill.description });
 
 						const deleteBtn = skillEl.createEl('button', {
-							text: '删除',
+							text: t('settings.delete'),
 							cls: 'claude-ai-btn-delete'
 						});
 						deleteBtn.onclick = async () => {
@@ -347,13 +351,13 @@ export class SettingsTab extends PluginSettingTab {
 	private showAddSkillDialog() {
 		// TODO: 实现添加Skill对话框
 		// 临时实现：使用prompt
-		const name = prompt('Skill名称：');
+		const name = prompt(t('settings.skillName'));
 		if (!name) return;
 
-		const description = prompt('Skill描述：');
+		const description = prompt(t('settings.skillDescription'));
 		if (!description) return;
 
-		const promptTemplate = prompt('提示词模板（使用{{input}}表示输入）：');
+		const promptTemplate = prompt(t('settings.promptTemplate'));
 		if (!promptTemplate) return;
 
 		const skillConfig: CustomSkillConfig = {

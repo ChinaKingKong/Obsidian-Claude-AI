@@ -24,6 +24,9 @@ export const enUS: LocaleStrings = {
 		aiTitle: 'Claude AI',
 		reply: 'Reply',
 		defaultTitle: 'Reply',
+		sendFailed: 'Send failed',
+		configureApiKey: '⚠️ Please configure API Key in settings first',
+		skillsPanelInDev: 'Skills panel in development...',
 	},
 
 	// Settings
@@ -44,6 +47,7 @@ export const enUS: LocaleStrings = {
 		providerInfo: 'Provider Info',
 		otherProviders: 'Configure other providers\' API Keys (optional)',
 		currentApiSource: 'Current API Source',
+		currentApiSourceDesc: 'Display current API Key source',
 		checking: 'Checking...',
 		fromEnv: 'Environment Variable',
 		fromSettings: 'Settings Panel',
@@ -56,6 +60,19 @@ export const enUS: LocaleStrings = {
 		enableStreamingDesc: 'Display AI responses in real-time',
 		sidebarWidth: 'Sidebar Width',
 		sidebarWidthDesc: 'Set sidebar width (pixels)',
+		predefinedSkills: 'Predefined Skills',
+		predefinedSkillsDesc: 'Available predefined skills',
+		customSkills: 'Custom Skills',
+		customSkillsDesc: 'Manage your custom skills',
+		addCustomSkill: 'Add Custom Skill',
+		addedCustomSkills: 'Added Custom Skills',
+		delete: 'Delete',
+		enterApiKey: 'Enter API Key',
+		enterApiKeyOptional: 'Enter API Key (optional)',
+		enterYourProviderApiKey: 'Enter your {provider} API Key (or use env var: {envKey})',
+		skillName: 'Skill Name',
+		skillDescription: 'Skill Description',
+		promptTemplate: 'Prompt Template (use {{input}} for input)',
 	},
 
 	// AI Providers

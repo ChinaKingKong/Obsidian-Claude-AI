@@ -1,27 +1,35 @@
 # Obsidian Claude AI Assistant
 
-> 在Obsidian中享受专业的AI对话体验，支持多家主流AI服务商
+> 在 Obsidian 中享受专业的 AI 对话体验，支持多家主流 AI 服务商
 >
-> 🎨 现代化扁平设计，简洁高效
+> 🎨 现代化扁平设计，简洁高效 | 🌍 完美支持中英文界面
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Obsidian](https://img.shields.io/badge/Obsidian-Compatible-blue)](https://obsidian.md)
+[![Version](https://img.shields.io/badge/version-0.2.0-orange)](https://github.com/ChinaKingKong/Obsidian-Claude-AI)
 
 ## ✨ 功能特性
 
+### 🌍 双语界面支持
+
+- **中英文切换**：在设置中一键切换界面语言
+- **即时生效**：设置面板立即切换语言，无需重启
+- **完整翻译**：所有界面元素均支持双语显示
+
 ### 🎨 界面设计
 
-- **现代化扁平设计**：简洁美观的Chatbox风格界面
-- **圆形Logo图标**：精致的视觉标识
-- **智能消息布局**：用户消息浅灰背景，AI消息透明背景
-- **Markdown渲染**：完整支持Markdown格式显示
+- **现代化扁平设计**：简洁美观的 Chatbox 风格界面
+- **圆形 Logo 图标**：精致的视觉标识
+- **智能消息布局**：用户消息浅灰背景，AI 消息透明背景
+- **Markdown 渲染**：完整支持 Markdown 格式显示
 - **代码高亮**：支持代码块语法高亮
-- **扁平化按钮**：简洁的发送按钮设计
+- **复制功能**：一键复制 AI 回复内容
+- **快捷设置入口**：顶部齿轮图标直接打开设置
 - **响应式设计**：完美适配不同屏幕尺寸
 
 ![Demo View](src/assets/demo-view.png)
 
-### 🤖 多AI服务商支持
+### 🤖 多 AI 服务商支持
 
 | 服务商 | 模型 | 推荐场景 |
 |--------|------|----------|
@@ -34,30 +42,40 @@
 
 ### 🎯 核心功能
 
-- **多AI服务商支持**：灵活切换6种主流AI服务
+- **多 AI 服务商支持**：灵活切换 6 种主流 AI 服务
 - **实时流式对话**：打字机效果的流式输出
 - **对话历史管理**：自动保存和加载对话记录
-- **Markdown格式渲染**：完整的Markdown支持
-- **灵活认证**：支持设置面板配置API Key
-- **简洁设置**：简单的设置面板，轻松配置
+- **Markdown 格式渲染**：完整的 Markdown 支持
+- **智能标题生成**：根据用户问题或内容类型自动生成标题
+- **一键复制功能**：鼠标悬停显示复制按钮
+- **双语界面**：支持中文/英文语言切换
+- **灵活认证**：支持设置面板配置 API Key
 
 ### 🎨 界面特性
 
-- **Chatbox风格设计**：简洁、现代、美观
-- **圆形Logo**：24px精致圆形图标
-- **扁平化按钮**：简洁的发送按钮，悬停时与Tag标签风格统一
-- **流式输出动画**：实时显示AI回复过程
-- **智能状态标签**：显示当前使用的AI模型
-- **清爽的消息布局**：用户消息浅灰背景，AI消息透明
+- **Chatbox 风格设计**：简洁、现代、美观
+- **圆形 Logo**：24px 精致圆形图标
+- **扁平化按钮**：简洁的发送按钮，悬停时与 Tag 标签风格统一
+- **流式输出动画**：实时显示 AI 回复过程
+- **智能状态标签**：显示当前使用的 AI 模型
+- **清爽的消息布局**：用户消息浅灰背景，AI 消息透明
+- **设置快捷入口**：顶部齿轮图标，一键打开插件设置
+- **语言切换**：在设置中选择中英文，立即生效
 
 ## 📦 安装
+
+### 从社区插件市场安装（推荐）
+
+1. 在 Obsidian 设置中进入"社区插件"
+2. 搜索"Claude AI Assistant"
+3. 点击安装并启用
 
 ### 从源码安装
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/yourusername/obsidian-claude-ai.git
-cd obsidian-claude-ai
+git clone https://github.com/ChinaKingKong/Obsidian-Claude-AI.git
+cd Obsidian-Claude-AI
 
 # 2. 安装依赖
 npm install
@@ -65,19 +83,19 @@ npm install
 # 3. 构建
 npm run build
 
-# 4. 部署到Obsidian（需要修改deploy.mjs中的路径）
+# 4. 部署到 Obsidian（需要修改 deploy.mjs 中的路径）
 npm run deploy
 ```
 
 ### 手动安装
 
-1. 下载最新版本的[Release](https://github.com/yourusername/obsidian-claude-ai/releases)
-2. 解压到你的Obsidian vault目录：`你的vault/.obsidian/plugins/obsidian-claude-ai/`
-3. 在Obsidian设置中启用插件
+1. 下载最新版本的 [Release](https://github.com/ChinaKingKong/Obsidian-Claude-AI/releases)
+2. 解压到你的 Obsidian vault 目录：`你的vault/.obsidian/plugins/obsidian-claude-ai/`
+3. 在 Obsidian 设置中启用插件
 
 ### 插件目录位置
 
-⚠️ **重要**：插件应安装在vault目录下，而非全局目录
+⚠️ **重要**：插件应安装在 vault 目录下，而非全局目录
 
 ```
 你的vault/
@@ -91,31 +109,41 @@ npm run deploy
 
 ## ⚙️ 配置
 
-### 快速开始（推荐智谱GLM）
+### 快速开始（推荐智谱 GLM）
 
-1. 打开Obsidian设置 → Claude AI Assistant
+1. 打开 Obsidian 设置 → Claude AI Assistant
 2. 选择"智谱AI (GLM)"
-3. 输入你的智谱API Key
+3. 输入你的智谱 API Key
 4. 选择模型"glm-4-flash"
 5. 点击侧边栏的 AI 图标开始使用！
 
-### API Key配置
+### 语言设置
+
+1. 打开插件设置
+2. 进入"界面设置" (UI Settings)
+3. 在"语言"下拉框中选择：
+   - `简体中文` - 简体中文界面
+   - `English` - 英文界面
+4. 设置面板立即切换语言
+5. **重新加载 Obsidian** 使聊天视图生效
+
+### API Key 配置
 
 #### 插件设置面板（推荐）
 
-1. 打开Obsidian设置
+1. 打开 Obsidian 设置
 2. 找到"Claude AI Assistant"
-3. 选择AI服务商
-4. 在对应字段输入API Key
+3. 选择 AI 服务商
+4. 在对应字段输入 API Key
 5. 选择模型
 6. 保存
 
-### 获取API Key
+### 获取 API Key
 
 | 服务商 | 注册地址 | 价格 | 免费额度 |
 |--------|----------|------|----------|
 | [智谱AI](https://open.bigmodel.cn/) | [点击注册](https://open.bigmodel.cn/) | 💰 | 新用户赠送 |
-| [OpenAI](https://platform.openai.com/) | [点击注册](https://platform.openai.com/) | 💎💎💎 | $5免费额度 |
+| [OpenAI](https://platform.openai.com/) | [点击注册](https://platform.openai.com/) | 💎💎💎 | $5 免费额度 |
 | [Anthropic](https://console.anthropic.com/) | [点击注册](https://console.anthropic.com/) | 💎💎 | 新用户赠送 |
 | [通义千问](https://bailian.console.aliyun.com/) | [点击注册](https://bailian.console.aliyun.com/) | 💰💰 | 新用户赠送 |
 | [DeepSeek](https://platform.deepseek.com/) | [点击注册](https://platform.deepseek.com/) | 💰 | 极低价格 |
@@ -125,20 +153,26 @@ npm run deploy
 
 ### 开始对话
 
-1. 打开Obsidian右侧边栏
+1. 打开 Obsidian 右侧边栏
 2. 点击 AI 图标打开对话面板
 3. 在输入框中输入消息
-4. 按Enter发送（Shift+Enter换行）
-5. 实时查看AI的流式响应
+4. 按 Enter 发送（Shift+Enter 换行）
+5. 实时查看 AI 的流式响应
+
+### 复制 AI 回复
+
+- 鼠标悬停在 AI 消息上
+- 点击右上角出现的复制图标
+- 内容已复制到剪贴板
 
 ### 对话管理
 
 - **自动保存**：对话自动保存，下次打开自动加载
-- **新建对话**：清空当前对话开始新的会话
+- **智能标题**：每条 AI 回复自动生成简洁标题
 
-### Markdown支持
+### Markdown 支持
 
-AI回复支持完整的Markdown格式：
+AI 回复支持完整的 Markdown 格式：
 - 标题（# ## ###）
 - **粗体** 和 *斜体*
 - 列表（有序、无序）
@@ -152,23 +186,29 @@ AI回复支持完整的Markdown格式：
 - **Enter**：发送消息
 - **Shift + Enter**：换行
 - **点击发送按钮**：发送消息
+- **点击齿轮图标**：打开插件设置
 
 ## 🏗️ 开发
 
 ### 项目结构
 
 ```
-obsidian-claude-ai/
+Obsidian-Claude-AI/
 ├── src/
 │   ├── main.ts                 # 插件入口
 │   ├── plugin.ts               # 核心插件类
 │   ├── types/
 │   │   └── index.ts            # 全局类型定义
-│   ├── api/                    # API集成层
+│   ├── i18n/                   # 国际化
+│   │   ├── i18n.ts             # i18n 系统
+│   │   └── locales/
+│   │       ├── zh-CN.ts         # 中文语言包
+│   │       └── en-US.ts         # 英文语言包
+│   ├── api/                    # API 集成层
 │   │   ├── auth/               # 认证管理
 │   │   │   └── auth-manager.ts
-│   │   └── claude/             # AI客户端
-│   │       └── universal-client.ts  # 通用AI客户端
+│   │   └── claude/             # AI 客户端
+│   │       └── universal-client.ts  # 通用 AI 客户端
 │   ├── ui/                     # 用户界面
 │   │   ├── sidebar/
 │   │   │   └── chat-view.ts    # 聊天视图
@@ -187,7 +227,7 @@ obsidian-claude-ai/
 
 ### 架构设计
 
-#### 事件驱动的UI层
+#### 事件驱动的 UI 层
 
 ```typescript
 class ChatView extends ItemView {
@@ -202,9 +242,24 @@ class ChatView extends ItemView {
 }
 ```
 
-#### 通用AI客户端
+#### 国际化系统
 
-支持多个AI服务商，统一接口：
+```typescript
+// 类型安全的翻译系统
+interface LocaleStrings {
+    common: { ready: string; copy: string; ... };
+    header: { title: string; settings: string; ... };
+    settings: { title: string; language: string; ... };
+    // ...
+}
+
+// 使用翻译函数
+const text = t('settings.title');
+```
+
+#### 通用 AI 客户端
+
+支持多个 AI 服务商，统一接口：
 
 ```typescript
 class UniversalAIClient {
@@ -222,7 +277,7 @@ npm install
 # 生产构建
 npm run build
 
-# 部署到Obsidian（需要先配置deploy.mjs中的路径）
+# 部署到 Obsidian（需要先配置 deploy.mjs 中的路径）
 npm run deploy
 ```
 
@@ -231,75 +286,81 @@ npm run deploy
 - **TypeScript** - 类型安全
 - **Obsidian Plugin API** - 插件框架
 - **esbuild** - 快速打包
+- **i18n** - 国际化支持
 - **设计灵感** - [Chatbox](https://github.com/Bin-Huang/chatbox)
+
+## 🗺️ 路线图
+
+### 已完成 ✅
+
+- [x] 多 AI 服务商支持（智谱、OpenAI、Claude、通义千问、DeepSeek、Kimi）
+- [x] 实时流式对话
+- [x] 对话历史管理
+- [x] Markdown 格式渲染
+- [x] Chatbox 风格 UI 重构
+- [x] 事件驱动架构
+- [x] 通用 AI 客户端
+- [x] 扁平化界面设计
+- [x] 圆形 Logo 图标
+- [x] 响应式消息布局
+- [x] 智能标题生成
+- [x] 一键复制功能
+- [x] 设置快捷入口
+- [x] **中英文双语支持**
+- [x] **国际化系统**
+
+### 计划中 📋
+
+- [ ] Skills 系统
+- [ ] SubAgent 并行引擎
+- [ ] 对话历史导出
+- [ ] 主题定制
+- [ ] 更多 AI 服务商
 
 ## ❓ 常见问题
 
 ### Q: 插件不显示怎么办？
 
-A: 确保插件安装在vault目录：
+A: 确保插件安装在 vault 目录：
 ```
 你的vault/.obsidian/plugins/obsidian-claude-ai/
 ```
 
-### Q: 提示"plugin is not defined"错误？
-
-A: 这个问题在 v0.2.0 已修复。请确保：
-1. 完全退出 Obsidian（Cmd+Q）
-2. 重新部署最新版本
-3. 重新打开 Obsidian
-
-### Q: API Key无效？
-
-A:
-1. 检查API Key格式是否正确
-2. 确认API Key未过期
-3. 确认选择了正确的服务商
-
-### Q: 如何切换AI服务商？
+### Q: 如何切换界面语言？
 
 A:
 1. 打开插件设置
-2. 在"AI服务商"下拉框中选择
-3. 输入对应服务商的API Key
+2. 进入"界面设置" (UI Settings)
+3. 在"语言"下拉框中选择
+4. 重新加载 Obsidian 使聊天视图生效
+
+### Q: API Key 无效？
+
+A:
+1. 检查 API Key 格式是否正确
+2. 确认 API Key 未过期
+3. 确认选择了正确的服务商
+
+### Q: 如何切换 AI 服务商？
+
+A:
+1. 打开插件设置
+2. 在"AI 服务设置"下拉框中选择
+3. 输入对应服务商的 API Key
 4. 选择模型
 5. 保存
 
 ### Q: 支持哪些模型？
 
-A: 每个服务商支持不同模型，详见上方"支持的AI服务商"表格。推荐配置：
-- **性价比**：智谱GLM-4-flash
+A: 每个服务商支持不同模型，详见上方"支持的 AI 服务商"表格。推荐配置：
+- **性价比**：智谱 GLM-4-flash
 - **质量**：Claude 3.5 Sonnet / GPT-4o
 - **编程**：DeepSeek-coder
 - **长文本**：Kimi moonshot-v1-128k
 
 ### Q: 如何查看对话历史？
 
-A: 对话自动保存，每次打开侧边栏会自动加载上次的对话。点击"新对话"按钮可以开始新的对话。
-
-## 🗺️ 路线图
-
-### 已完成 ✅
-
-- [x] 多AI服务商支持（智谱、OpenAI、Claude、通义千问、DeepSeek、Kimi）
-- [x] 实时流式对话
-- [x] 对话历史管理
-- [x] Markdown格式渲染
-- [x] Chatbox风格UI重构
-- [x] 事件驱动架构
-- [x] 通用AI客户端
-- [x] 扁平化界面设计
-- [x] 圆形Logo图标
-- [x] 响应式消息布局
-
-### 计划中 📋
-
-- [ ] Skills系统
-- [ ] SubAgent并行引擎
-- [ ] 对话历史导出
-- [ ] 多语言UI
-- [ ] 主题定制
-- [ ] 更多AI服务商
+A: 对话自动保存，每次打开侧边栏会自动加载上次的对话。
 
 ## 🤝 贡献
 
@@ -307,15 +368,15 @@ A: 对话自动保存，每次打开侧边栏会自动加载上次的对话。�
 
 ### 贡献步骤
 
-1. Fork本仓库
+1. Fork 本仓库
 2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
 3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启Pull Request
+5. 开启 Pull Request
 
 ### 代码风格
 
-- 遵循TypeScript最佳实践
+- 遵循 TypeScript 最佳实践
 - 使用类方法而非闭包处理事件
 - 保持代码简洁和可读性
 - 添加适当的注释
@@ -328,23 +389,24 @@ A: 对话自动保存，每次打开侧边栏会自动加载上次的对话。�
 
 - [Chatbox](https://github.com/Bin-Huang/chatbox) - 优秀的设计理念和架构启发
 - [Obsidian](https://obsidian.md/) - 强大的知识管理工具
-- [智谱AI](https://open.bigmodel.cn/) - 国产AI服务
-- [OpenAI](https://openai.com/) - GPT提供商
-- [Anthropic](https://www.anthropic.com/) - Claude提供商
+- [智谱AI](https://open.bigmodel.cn/) - 国产 AI 服务
+- [OpenAI](https://openai.com/) - GPT 提供商
+- [Anthropic](https://www.anthropic.com/) - Claude 提供商
 - [阿里云](https://aliyun.com) - 通义千问提供商
-- [DeepSeek](https://www.deepseek.com/) - DeepSeek提供商
-- [月之暗面](https://www.moonshot.cn/) - Kimi提供商
+- [DeepSeek](https://www.deepseek.com/) - DeepSeek 提供商
+- [月之暗面](https://www.moonshot.cn/) - Kimi 提供商
 
 ## ⭐ 支持
 
-如果这个插件对你有帮助，请给个⭐️支持一下！
+如果这个插件对你有帮助，请给个 ⭐️ 支持一下！
 
-有问题或建议？欢迎提交[Issue](https://github.com/yourusername/obsidian-claude-ai/issues)！
+有问题或建议？欢迎提交 [Issue](https://github.com/ChinaKingKong/Obsidian-Claude-AI/issues)！
 
 ## 📞 联系方式
 
 - 作者：KingKong
 - 邮箱：hunanjingang@gmail.com
+- 仓库：https://github.com/ChinaKingKong/Obsidian-Claude-AI
 
 ---
 
@@ -353,5 +415,7 @@ A: 对话自动保存，每次打开侧边栏会自动加载上次的对话。�
 **Made with ❤️ by the community**
 
 **Inspired by [Chatbox](https://github.com/Bin-Huang/chatbox)**
+
+**🌍 Supporting bilingual interface (中文/English)**
 
 </div>

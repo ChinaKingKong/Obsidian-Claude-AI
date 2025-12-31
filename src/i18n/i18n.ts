@@ -27,6 +27,9 @@ export interface LocaleStrings {
 		aiTitle: string;
 		reply: string;
 		defaultTitle: string;
+		sendFailed: string;
+		configureApiKey: string;
+		skillsPanelInDev: string;
 	};
 
 	// 设置面板
@@ -47,6 +50,7 @@ export interface LocaleStrings {
 		providerInfo: string;
 		otherProviders: string;
 		currentApiSource: string;
+		currentApiSourceDesc: string;
 		checking: string;
 		fromEnv: string;
 		fromSettings: string;
@@ -59,6 +63,19 @@ export interface LocaleStrings {
 		enableStreamingDesc: string;
 		sidebarWidth: string;
 		sidebarWidthDesc: string;
+		predefinedSkills: string;
+		predefinedSkillsDesc: string;
+		customSkills: string;
+		customSkillsDesc: string;
+		addCustomSkill: string;
+		addedCustomSkills: string;
+		delete: string;
+		enterApiKey: string;
+		enterApiKeyOptional: string;
+		enterYourProviderApiKey: string;
+		skillName: string;
+		skillDescription: string;
+		promptTemplate: string;
 	};
 
 	// AI 服务商

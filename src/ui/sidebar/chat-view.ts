@@ -189,15 +189,7 @@ export class ChatView extends ItemView {
 	 * 获取提供商显示名称
 	 */
 	private getProviderDisplayName(provider: any): string {
-		const names: Record<string, string> = {
-			'zhipu': '智谱 GLM',
-			'openai': 'GPT-4',
-			'anthropic': 'Claude',
-			'qwen': '通义千问',
-			'deepseek': 'DeepSeek',
-			'moonshot': 'Kimi'
-		};
-		return names[provider] || 'AI';
+		return t(`providers.${provider}` as any) || 'AI';
 	}
 
 	/**
@@ -334,7 +326,7 @@ export class ChatView extends ItemView {
 			}
 
 		} catch (error) {
-			const errorMsg = error instanceof Error ? error.message : '发送失败';
+			const errorMsg = error instanceof Error ? error.message : t('chatView.sendFailed');
 			this.updateLastMessage(`❌ ${errorMsg}`, false);
 		} finally {
 			// 重置发送状态
@@ -655,7 +647,7 @@ export class ChatView extends ItemView {
 	private showConfigError(): void {
 		this.appendMessageToUI({
 			role: 'assistant',
-			content: '⚠️ 请先在设置中配置API Key',
+			content: t('chatView.configureApiKey'),
 			timestamp: Date.now()
 		});
 	}
@@ -734,7 +726,7 @@ export class ChatView extends ItemView {
 	private handleOpenSkills(): void {
 		this.appendMessageToUI({
 			role: 'assistant',
-			content: 'Skills面板开发中...',
+			content: t('chatView.skillsPanelInDev'),
 			timestamp: Date.now()
 		});
 	}

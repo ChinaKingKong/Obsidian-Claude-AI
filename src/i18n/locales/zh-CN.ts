@@ -24,6 +24,9 @@ export const zhCN: LocaleStrings = {
 		aiTitle: 'Claude AI',
 		reply: '回复',
 		defaultTitle: '回复',
+		sendFailed: '发送失败',
+		configureApiKey: '⚠️ 请先在设置中配置API Key',
+		skillsPanelInDev: 'Skills面板开发中...',
 	},
 
 	// 设置面板
@@ -44,6 +47,7 @@ export const zhCN: LocaleStrings = {
 		providerInfo: '服务商信息',
 		otherProviders: '配置其他服务商的API Key（可选）',
 		currentApiSource: '当前API来源',
+		currentApiSourceDesc: '显示当前API Key的来源',
 		checking: '检测中...',
 		fromEnv: '环境变量',
 		fromSettings: '设置面板',
@@ -56,6 +60,19 @@ export const zhCN: LocaleStrings = {
 		enableStreamingDesc: '实时显示AI的响应',
 		sidebarWidth: '侧边栏宽度',
 		sidebarWidthDesc: '设置侧边栏的宽度（像素）',
+		predefinedSkills: '预定义Skills',
+		predefinedSkillsDesc: '可用的预定义Skills',
+		customSkills: '自定义Skills',
+		customSkillsDesc: '管理你的自定义Skills',
+		addCustomSkill: '添加自定义Skill',
+		addedCustomSkills: '已添加的自定义Skills',
+		delete: '删除',
+		enterApiKey: '输入API Key',
+		enterApiKeyOptional: '输入API Key（可选）',
+		enterYourProviderApiKey: '输入你的 {provider} API Key（或使用环境变量：{envKey}）',
+		skillName: 'Skill名称',
+		skillDescription: 'Skill描述',
+		promptTemplate: '提示词模板（使用{{input}}表示输入）',
 	},
 
 	// AI 服务商
