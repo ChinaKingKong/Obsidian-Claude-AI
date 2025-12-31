@@ -41,6 +41,24 @@ export interface LocaleStrings {
 		language: string;
 		languageDesc: string;
 		save: string;
+		uiSettings: string;
+		skillsSettings: string;
+		apiKeyConfig: string;
+		providerInfo: string;
+		otherProviders: string;
+		currentApiSource: string;
+		checking: string;
+		fromEnv: string;
+		fromSettings: string;
+		notConfigured: string;
+		maxTokens: string;
+		maxTokensDesc: string;
+		temperature: string;
+		temperatureDesc: string;
+		enableStreaming: string;
+		enableStreamingDesc: string;
+		sidebarWidth: string;
+		sidebarWidthDesc: string;
 	};
 
 	// AI 服务商

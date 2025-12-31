@@ -74,10 +74,9 @@ export class SettingsTab extends PluginSettingTab {
 		const providerConfig = AI_PROVIDERS[currentProvider];
 
 		new Setting(containerEl)
-			.setName('Provider Info')
+			.setName(t('settings.providerInfo'))
 			.setDesc(
-				`Selected: ${providerConfig.name}\n` +
-				`Env Var: ${providerConfig.envKey}\n` +
+				`${t('settings.fromEnv')}: ${providerConfig.envKey}\n` +
 				`Models: ${providerConfig.models.join(', ')}`
 			);
 
@@ -93,7 +92,7 @@ export class SettingsTab extends PluginSettingTab {
 		const settings = this.plugin.getSettings();
 		const currentProvider = settings.provider;
 
-		containerEl.createEl('h4', { text: 'API Key Configuration' });
+		containerEl.createEl('h4', { text: t('settings.apiKeyConfig') });
 
 		// 当前服务商的API Key
 		new Setting(containerEl)
@@ -112,7 +111,7 @@ export class SettingsTab extends PluginSettingTab {
 		// 其他服务商的API Key配置（折叠显示）
 		const otherProvidersContainer = containerEl.createDiv();
 		otherProvidersContainer.createEl('details', { cls: 'collapsible' }).innerHTML = `
-			<summary>Configure other providers' API Keys (optional)</summary>
+			<summary>${t('settings.otherProviders')}</summary>
 			<div style="margin-top: 10px;"></div>
 		`;
 
@@ -130,7 +129,7 @@ export class SettingsTab extends PluginSettingTab {
 
 			new Setting(contentEl)
 				.setName(`${t(`providers.${provider}` as any)} API Key`)
-				.setDesc(`Env Var: ${config.envKey}`)
+				.setDesc(`${t('settings.fromEnv')}: ${config.envKey}`)
 				.addText(text => text
 					.setPlaceholder('Enter API Key (optional)')
 					.setValue(settings.apiKeys[provider] || '')
@@ -144,10 +143,10 @@ export class SettingsTab extends PluginSettingTab {
 
 		// API来源显示
 		new Setting(containerEl)
-			.setName('Current API Source')
+			.setName(t('settings.currentApiSource'))
 			.setDesc('Display current API Key source')
 			.addText(text => text
-				.setValue('Checking...')
+				.setValue(t('settings.checking'))
 				.setDisabled(true)
 				.then(async () => {
 					const authManager = (this.plugin as any).authManager;
@@ -156,9 +155,9 @@ export class SettingsTab extends PluginSettingTab {
 					const envKey = AI_PROVIDERS[provider as AIProvider].envKey;
 
 					text.setValue(
-						source === 'env' ? `环境变量 (${envKey})` :
-						source === 'settings' ? '设置面板' :
-						'未配置'
+						source === 'env' ? `${t('settings.fromEnv')} (${envKey})` :
+						source === 'settings' ? t('settings.fromSettings') :
+						t('settings.notConfigured')
 					);
 				})
 			);
@@ -196,8 +195,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 最大Tokens
 		new Setting(containerEl)
-			.setName('Max Tokens')
-			.setDesc('Maximum tokens per request')
+			.setName(t('settings.maxTokens'))
+			.setDesc(t('settings.maxTokensDesc'))
 			.addText(text => text
 				.setPlaceholder('4096')
 				.setValue(String(settings.maxTokens))
@@ -211,8 +210,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 温度
 		new Setting(containerEl)
-			.setName('Temperature')
-			.setDesc('Control output randomness (0-1)')
+			.setName(t('settings.temperature'))
+			.setDesc(t('settings.temperatureDesc'))
 			.addSlider(slider => slider
 				.setLimits(0, 1, 0.1)
 				.setValue(settings.temperature)
@@ -224,8 +223,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 流式输出
 		new Setting(containerEl)
-			.setName('Enable Streaming')
-			.setDesc('Display AI responses in real-time')
+			.setName(t('settings.enableStreaming'))
+			.setDesc(t('settings.enableStreamingDesc'))
 			.addToggle(toggle => toggle
 				.setValue(settings.enableStreaming)
 				.onChange(async (value) => {
@@ -239,7 +238,7 @@ export class SettingsTab extends PluginSettingTab {
 	 * @private
 	 */
 	private createSkillsSettings(containerEl: HTMLElement) {
-		containerEl.createEl('h3', { text: 'Skills设置' });
+		containerEl.createEl('h3', { text: t('settings.skillsSettings') });
 
 		const skillManager = this.plugin.getSkillManager();
 		const predefinedSkills = skillManager.getAllSkills()
@@ -303,7 +302,7 @@ export class SettingsTab extends PluginSettingTab {
 	 * @private
 	 */
 	private createUISettings(containerEl: HTMLElement) {
-		containerEl.createEl('h3', { text: 'UI Settings' });
+		containerEl.createEl('h3', { text: t('settings.uiSettings') });
 
 		const settings = this.plugin.getSettings();
 
@@ -327,8 +326,8 @@ export class SettingsTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('Sidebar Width')
-			.setDesc('Set sidebar width (pixels)')
+			.setName(t('settings.sidebarWidth'))
+			.setDesc(t('settings.sidebarWidthDesc'))
 			.addText(text => text
 				.setPlaceholder('400')
 				.setValue(String(settings.sidebarWidth))
