@@ -2,6 +2,7 @@ import { ItemView, WorkspaceLeaf, MarkdownRenderer, Component } from 'obsidian';
 import { ClaudeAIPlugin } from '../../plugin';
 import { ChatMessage } from '../../types';
 import { LOGO_BASE64 } from '../../logo-base64';
+import { t } from '../../i18n/i18n';
 
 /**
  * Claude AI 聊天视图
@@ -99,14 +100,14 @@ export class ChatView extends ItemView {
 		logoImg.src = `data:image/png;base64,${LOGO_BASE64}`;
 		logoImg.alt = 'Claude AI Logo';
 
-		const title = titleGroup.createEl('h2', { text: 'Obsidian Claude AI Assistant' });
+		const title = titleGroup.createEl('h2', { text: t('header.title') });
 
 		// 状态信息
 		const statusInfo = headerLeft.createDiv('claude-ai-status-info');
 		statusInfo.innerHTML = `
 			<span class="claude-ai-status-item">
 				<span class="claude-ai-status-dot"></span>
-				<span>就绪</span>
+				<span>${t('common.ready')}</span>
 			</span>
 		`;
 
@@ -115,7 +116,7 @@ export class ChatView extends ItemView {
 			cls: 'claude-ai-settings-button'
 		});
 		settingsButton.type = 'button';
-		settingsButton.setAttribute('aria-label', '打开设置');
+		settingsButton.setAttribute('aria-label', t('header.settings'));
 		settingsButton.innerHTML = `
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<circle cx="12" cy="12" r="3"></circle>
@@ -139,7 +140,7 @@ export class ChatView extends ItemView {
 
 		// 输入框
 		this.textareaElement = inputWrapper.createEl('textarea', {
-			placeholder: '给 Claude 发送消息...',
+			placeholder: t('chatView.placeholder'),
 			cls: 'claude-ai-input'
 		});
 
@@ -159,7 +160,7 @@ export class ChatView extends ItemView {
 			</span>
 			<span class="claude-ai-status-tag">
 				<span class="claude-ai-status-icon">💭</span>
-				思考模式
+				${t('tags.thinkingMode')}
 			</span>
 		`;
 
@@ -430,7 +431,7 @@ export class ChatView extends ItemView {
 
 			// 标题
 			const title = header.createEl('h4', {
-				text: message.isStreaming ? 'Claude AI' : this.generateTitle(message.content, message.userQuestion)
+				text: message.isStreaming ? t('chatView.aiTitle') : this.generateTitle(message.content, message.userQuestion)
 			});
 			title.addClass('claude-ai-message-title');
 
@@ -439,7 +440,7 @@ export class ChatView extends ItemView {
 				cls: 'claude-ai-copy-button'
 			});
 			copyButton.type = 'button';
-			copyButton.setAttribute('aria-label', '复制消息');
+			copyButton.setAttribute('aria-label', t('common.copy'));
 			copyButton.innerHTML = `
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -450,7 +451,7 @@ export class ChatView extends ItemView {
 			// 复制按钮点击事件
 			copyButton.addEventListener('click', async () => {
 				await this.copyToClipboard(message.content);
-				this.showToast('复制成功');
+				this.showToast(t('common.copySuccess'));
 			});
 		}
 
@@ -516,14 +517,14 @@ export class ChatView extends ItemView {
 
 		// 如果内容为空
 		if (!trimmedContent) {
-			return '回复';
+			return t('chatView.defaultTitle');
 		}
 
 		// 检测是否包含代码块
 		const codeBlockMatch = trimmedContent.match(/```(\w+)?/);
 		if (codeBlockMatch) {
 			const language = codeBlockMatch[1];
-			return language ? `${language} 代码` : '代码片段';
+			return language ? `${language} code` : 'Code snippet';
 		}
 
 		// 检测内容类型并生成标题
@@ -541,60 +542,51 @@ export class ChatView extends ItemView {
 		// 分析内容特征
 		const hasList = /^\s*[-*+]\s|^\s*\d+\.\s/m.test(trimmedContent);
 		const hasCode = /`[^`]+`/.test(trimmedContent);
-		const hasSteps = /第[一二三四五六七八九十\d]+[步步]|步骤\d+/i.test(trimmedContent);
+		const hasSteps = /step\s*\d+|第[一二三四五六七八九十\d]+[步步]|步骤\d+/i.test(trimmedContent);
 		const hasQuestion = /[？?]$/.test(lines[0] || '');
 		const hasError = /错误|失败|异常|error|exception/i.test(trimmedContent.substring(0, 100));
-		const hasSolution = /解决|修复|方法|方案|可以|应该|建议/i.test(trimmedContent.substring(0, 100));
+		const hasSolution = /解决|修复|方法|方案|可以|应该|建议|solution|fix|method|should/i.test(trimmedContent.substring(0, 100));
 
 		// 根据特征生成标题
 		if (hasError && hasSolution) {
-			return '问题解答';
+			return 'Solution';
 		}
 
 		if (hasSteps) {
-			return '操作步骤';
+			return 'Steps';
 		}
 
 		if (hasList) {
 			const listItems = trimmedContent.match(/^\s*[-*+]\s+.+$/gm) || [];
 			if (listItems.length >= 3) {
-				return '列表清单';
+				return 'List';
 			}
-			return '说明';
+			return 'Note';
 		}
 
 		if (hasQuestion) {
-			return '问答';
+			return 'Q&A';
 		}
 
 		// 检查是否是解释性内容
-		const explanatoryKeywords = /是|是指|表示|包括|包含|可以分为|主要|用于|用来|是一种|定义|意思|解释/i;
+		const explanatoryKeywords = /是|是指|表示|包括|包含|可以分为|主要|用于|用来|是一种|定义|意思|解释|means|refers|represents|includes|definition/i;
 		if (explanatoryKeywords.test(trimmedContent.substring(0, 100))) {
-			// 提取关键词作为标题
-			const firstSentence = lines[0] || '';
-			const keywordMatch = firstSentence.match(/(?:什么是|如何|怎么|什么是)(.+?)(?:的|？|\?|$)/);
-			if (keywordMatch) {
-				const keyword = keywordMatch[1].trim();
-				if (keyword.length <= 15) {
-					return keyword + '说明';
-				}
-			}
-			return '说明';
+			return 'Explanation';
 		}
 
 		// 检查是否是代码相关
-		if (hasCode || /函数|方法|变量|参数|返回|调用/i.test(trimmedContent.substring(0, 100))) {
-			return '代码说明';
+		if (hasCode || /函数|方法|变量|参数|返回|调用|function|method|variable|parameter|return/i.test(trimmedContent.substring(0, 100))) {
+			return 'Code';
 		}
 
 		// 检查是否是配置相关
-		if (/配置|设置|选项|参数|开启|关闭|启用|禁用/i.test(trimmedContent.substring(0, 100))) {
-			return '配置说明';
+		if (/配置|设置|选项|参数|开启|关闭|启用|禁用|config|setting|option|parameter/i.test(trimmedContent.substring(0, 100))) {
+			return 'Configuration';
 		}
 
 		// 检查是否是示例
-		if (/例如|比如|示例|演示|如下/i.test(trimmedContent.substring(0, 100))) {
-			return '示例说明';
+		if (/例如|比如|示例|演示|如下|for example|e\.g\.|sample|demo/i.test(trimmedContent.substring(0, 100))) {
+			return 'Example';
 		}
 
 		// 提取第一句话的关键词
@@ -602,7 +594,7 @@ export class ChatView extends ItemView {
 		if (firstSentence) {
 			// 去除常见的开头词
 			let shortTitle = firstSentence
-				.replace(/^(好的|当然|没问题|我来|让我|根据|按照|以下是|这里|以上|这个)/, '')
+				.replace(/^(好的|当然|没问题|我来|让我|根据|按照|以下是|这里|以上|这个|ok|sure|let me|based on|according to|the following|here|this)/i, '')
 				.replace(/[，,。.!！?？\s]*$/, '')
 				.trim();
 
@@ -623,7 +615,7 @@ export class ChatView extends ItemView {
 		}
 
 		// 默认标题
-		return '回复';
+		return t('chatView.defaultTitle');
 	}
 
 	/**
