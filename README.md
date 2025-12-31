@@ -19,7 +19,7 @@
 - **扁平化按钮**：简洁的发送按钮设计
 - **响应式设计**：完美适配不同屏幕尺寸
 
-![Demo View](src/assets/demo_view.png)
+![Demo View](src/assets/demo-view.png)
 
 ### 🤖 多AI服务商支持
 
