@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { ClaudeAIPlugin } from '../../plugin';
 import { AIProvider, AI_PROVIDERS, CustomSkillConfig } from '../../types';
-import { setLanguage, getLanguage, Language } from '../../i18n/i18n';
+import { setLanguage, getLanguage, Language, t } from '../../i18n/i18n';
 
 /**
  * Claude AI 插件设置面板
@@ -23,7 +23,7 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.empty();
 
 		// 标题
-		containerEl.createEl('h2', { text: 'Claude AI Assistant 设置' });
+		containerEl.createEl('h2', { text: t('settings.title') });
 
 		// AI服务设置
 		this.createProviderSettings(containerEl);
@@ -43,17 +43,17 @@ export class SettingsTab extends PluginSettingTab {
 	 * @private
 	 */
 	private createProviderSettings(containerEl: HTMLElement) {
-		containerEl.createEl('h3', { text: 'AI服务设置' });
+		containerEl.createEl('h3', { text: t('settings.aiService') });
 
 		// 服务商选择
 		new Setting(containerEl)
-			.setName('AI服务商')
-			.setDesc('选择要使用的AI服务提供商')
+			.setName(t('settings.aiService'))
+			.setDesc(t('settings.aiServiceDesc'))
 			.addDropdown(dropdown => {
 				// 添加所有服务商选项
 				Object.values(AIProvider).forEach(provider => {
 					const config = AI_PROVIDERS[provider];
-					dropdown.addOption(provider, config.name);
+					dropdown.addOption(provider, t(`providers.${provider}` as any));
 				});
 
 				// 设置当前值
@@ -74,11 +74,11 @@ export class SettingsTab extends PluginSettingTab {
 		const providerConfig = AI_PROVIDERS[currentProvider];
 
 		new Setting(containerEl)
-			.setName('服务商信息')
+			.setName('Provider Info')
 			.setDesc(
-				`当前选中：${providerConfig.name}\n` +
-				`环境变量名：${providerConfig.envKey}\n` +
-				`支持模型：${providerConfig.models.join(', ')}`
+				`Selected: ${providerConfig.name}\n` +
+				`Env Var: ${providerConfig.envKey}\n` +
+				`Models: ${providerConfig.models.join(', ')}`
 			);
 
 		// API Key配置
@@ -93,14 +93,14 @@ export class SettingsTab extends PluginSettingTab {
 		const settings = this.plugin.getSettings();
 		const currentProvider = settings.provider;
 
-		containerEl.createEl('h4', { text: 'API Key配置' });
+		containerEl.createEl('h4', { text: 'API Key Configuration' });
 
 		// 当前服务商的API Key
 		new Setting(containerEl)
-			.setName(`${AI_PROVIDERS[currentProvider].name} API Key`)
-			.setDesc(`输入你的${AI_PROVIDERS[currentProvider].name} API Key（也可通过环境变量 ${AI_PROVIDERS[currentProvider].envKey} 配置）`)
+			.setName(`${t(`providers.${currentProvider}` as any)} API Key`)
+			.setDesc(`Enter your ${t(`providers.${currentProvider}` as any)} API Key (or use env var: ${AI_PROVIDERS[currentProvider].envKey})`)
 			.addText(text => text
-				.setPlaceholder('输入API Key')
+				.setPlaceholder('Enter API Key')
 				.setValue(settings.apiKeys[currentProvider] || '')
 				.onChange(async (value) => {
 					const newApiKeys = { ...settings.apiKeys };
@@ -112,7 +112,7 @@ export class SettingsTab extends PluginSettingTab {
 		// 其他服务商的API Key配置（折叠显示）
 		const otherProvidersContainer = containerEl.createDiv();
 		otherProvidersContainer.createEl('details', { cls: 'collapsible' }).innerHTML = `
-			<summary>配置其他服务商的API Key（可选）</summary>
+			<summary>Configure other providers' API Keys (optional)</summary>
 			<div style="margin-top: 10px;"></div>
 		`;
 
@@ -129,10 +129,10 @@ export class SettingsTab extends PluginSettingTab {
 			const config = AI_PROVIDERS[provider];
 
 			new Setting(contentEl)
-				.setName(`${config.name} API Key`)
-				.setDesc(`环境变量：${config.envKey}`)
+				.setName(`${t(`providers.${provider}` as any)} API Key`)
+				.setDesc(`Env Var: ${config.envKey}`)
 				.addText(text => text
-					.setPlaceholder('输入API Key（可选）')
+					.setPlaceholder('Enter API Key (optional)')
 					.setValue(settings.apiKeys[provider] || '')
 					.onChange(async (value) => {
 						const newApiKeys = { ...settings.apiKeys };
@@ -144,10 +144,10 @@ export class SettingsTab extends PluginSettingTab {
 
 		// API来源显示
 		new Setting(containerEl)
-			.setName('当前API来源')
-			.setDesc('显示当前使用的API Key来源')
+			.setName('Current API Source')
+			.setDesc('Display current API Key source')
 			.addText(text => text
-				.setValue('检测中...')
+				.setValue('Checking...')
 				.setDisabled(true)
 				.then(async () => {
 					const authManager = (this.plugin as any).authManager;
@@ -169,7 +169,7 @@ export class SettingsTab extends PluginSettingTab {
 	 * @private
 	 */
 	private createModelSettings(containerEl: HTMLElement) {
-		containerEl.createEl('h3', { text: '模型设置' });
+		containerEl.createEl('h3', { text: t('settings.model') });
 
 		const settings = this.plugin.getSettings();
 		const currentProvider = settings.provider;
@@ -177,8 +177,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 模型选择
 		new Setting(containerEl)
-			.setName('模型')
-			.setDesc('选择AI模型')
+			.setName(t('settings.model'))
+			.setDesc(t('settings.modelDesc'))
 			.addDropdown(dropdown => {
 				// 添加当前服务商支持的模型
 				providerConfig.models.forEach(model => {
@@ -196,8 +196,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 最大Tokens
 		new Setting(containerEl)
-			.setName('最大Tokens')
-			.setDesc('单次请求的最大token数')
+			.setName('Max Tokens')
+			.setDesc('Maximum tokens per request')
 			.addText(text => text
 				.setPlaceholder('4096')
 				.setValue(String(settings.maxTokens))
@@ -211,8 +211,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 温度
 		new Setting(containerEl)
-			.setName('温度')
-			.setDesc('控制输出的随机性（0-1）')
+			.setName('Temperature')
+			.setDesc('Control output randomness (0-1)')
 			.addSlider(slider => slider
 				.setLimits(0, 1, 0.1)
 				.setValue(settings.temperature)
@@ -224,8 +224,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		// 流式输出
 		new Setting(containerEl)
-			.setName('启用流式输出')
-			.setDesc('实时显示AI的响应')
+			.setName('Enable Streaming')
+			.setDesc('Display AI responses in real-time')
 			.addToggle(toggle => toggle
 				.setValue(settings.enableStreaming)
 				.onChange(async (value) => {
@@ -303,14 +303,14 @@ export class SettingsTab extends PluginSettingTab {
 	 * @private
 	 */
 	private createUISettings(containerEl: HTMLElement) {
-		containerEl.createEl('h3', { text: '界面设置' });
+		containerEl.createEl('h3', { text: 'UI Settings' });
 
 		const settings = this.plugin.getSettings();
 
 		// 语言设置
 		new Setting(containerEl)
-			.setName('语言 / Language')
-			.setDesc('选择界面显示语言 / Select interface display language')
+			.setName(t('settings.language'))
+			.setDesc(t('settings.languageDesc'))
 			.addDropdown(dropdown => {
 				dropdown.addOption('zh-CN', '简体中文');
 				dropdown.addOption('en-US', 'English');
@@ -327,8 +327,8 @@ export class SettingsTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('侧边栏宽度')
-			.setDesc('设置侧边栏的宽度（像素）')
+			.setName('Sidebar Width')
+			.setDesc('Set sidebar width (pixels)')
 			.addText(text => text
 				.setPlaceholder('400')
 				.setValue(String(settings.sidebarWidth))
