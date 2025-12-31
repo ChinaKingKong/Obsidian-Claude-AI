@@ -245,6 +245,7 @@ export interface ClaudeAIPluginSettings {
 
 	// UI设置
 	sidebarWidth: number;
+	language: 'zh-CN' | 'en-US';
 
 	// Skills
 	customSkills: CustomSkillConfig[];
@@ -265,5 +266,6 @@ export const DEFAULT_SETTINGS: ClaudeAIPluginSettings = {
 	temperature: 0.7,
 	enableStreaming: true,
 	sidebarWidth: 400,
+	language: 'zh-CN',
 	customSkills: []
 };

@@ -1,6 +1,7 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { ClaudeAIPlugin } from '../../plugin';
 import { AIProvider, AI_PROVIDERS, CustomSkillConfig } from '../../types';
+import { setLanguage, getLanguage, Language } from '../../i18n/i18n';
 
 /**
  * Claude AI 插件设置面板
@@ -305,6 +306,25 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.createEl('h3', { text: '界面设置' });
 
 		const settings = this.plugin.getSettings();
+
+		// 语言设置
+		new Setting(containerEl)
+			.setName('语言 / Language')
+			.setDesc('选择界面显示语言 / Select interface display language')
+			.addDropdown(dropdown => {
+				dropdown.addOption('zh-CN', '简体中文');
+				dropdown.addOption('en-US', 'English');
+
+				dropdown.setValue(settings.language);
+
+				dropdown.onChange(async (value: Language) => {
+					await this.plugin.updateSettings({ language: value });
+					setLanguage(value);
+
+					// 刷新设置面板以更新语言
+					this.display();
+				});
+			});
 
 		new Setting(containerEl)
 			.setName('侧边栏宽度')

@@ -7,6 +7,7 @@ import { ParallelExecutor } from './subagent/parallel-executor';
 import { SettingsTab } from './ui/settings/settings-tab';
 import { ConversationStore } from './storage/conversation-store';
 import { DEFAULT_SETTINGS, ClaudeAIPluginSettings, AIProvider } from './types';
+import { initI18n } from './i18n/i18n';
 
 /**
  * Claude AI 插件核心类
@@ -57,6 +58,9 @@ export class ClaudeAIPlugin {
 
 		// 加载插件设置
 		await this.loadSettings();
+
+		// 初始化 i18n
+		initI18n(this.settings.language);
 
 		// 尝试初始化通用AI客户端（如果API Key存在）
 		try {
