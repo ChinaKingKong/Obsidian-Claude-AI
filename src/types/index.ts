@@ -210,6 +210,7 @@ export interface ChatMessage {
 	content: string;
 	timestamp: number;
 	isStreaming?: boolean;
+	userQuestion?: string; // 用户的问题（用于生成标题）
 }
 
 export interface ConversationSession {

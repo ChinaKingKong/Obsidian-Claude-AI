@@ -151,17 +151,42 @@
 	position: relative;
 }
 
+/* AI 消息标题栏 */
+.claude-ai-message-header-content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+/* AI 消息标题 */
+.claude-ai-message-title {
+	margin: 0;
+	padding: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #1f2937;
+	letter-spacing: -0.01em;
+	user-select: text;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	cursor: text;
+}
+
 /* 复制按钮 - 图标样式 */
 .claude-ai-copy-button {
-	position: absolute;
-	bottom: 8px;
-	right: 8px;
-	width: 28px;
-	height: 28px;
+	position: relative;
+	width: 24px;
+	height: 24px;
 	padding: 0;
-	border: none;
-	border-radius: 4px;
-	background-color: rgba(0, 0, 0, 0.05);
+	border: none !important;
+	border-radius: 0;
+	background-color: transparent !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	outline: none !important;
 	color: #6b7280;
 	cursor: pointer;
 	display: flex;
@@ -171,6 +196,7 @@
 	pointer-events: none;
 	transition: all 0.15s ease;
 	z-index: 10;
+	flex-shrink: 0;
 }
 
 .claude-ai-copy-button svg {
@@ -178,20 +204,35 @@
 	height: 14px;
 }
 
-.claude-ai-message:hover .claude-ai-copy-button {
+/* 流式输出时隐藏复制按钮 */
+.claude-ai-message.streaming .claude-ai-copy-button {
+	display: none;
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* 非流式输出且内容不为空时显示复制按钮 */
+.claude-ai-message-assistant:not(.streaming):hover .claude-ai-copy-button {
+	display: flex;
 	opacity: 1;
 	pointer-events: auto;
 }
 
 .claude-ai-copy-button:hover {
-	background-color: rgba(0, 0, 0, 0.1);
 	color: #374151;
 	transform: scale(1.05);
+	background-color: transparent !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	border: none !important;
 }
 
 .claude-ai-copy-button:active {
-	background-color: rgba(0, 0, 0, 0.15);
 	transform: scale(0.95);
+	background-color: transparent !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	border: none !important;
 }
 
 /* Toast提示 */
@@ -255,6 +296,10 @@
 	line-height: 1.7;
 	color: #1f2937;
 	word-wrap: break-word;
+	user-select: text;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
 }
 
 .claude-ai-message-content p {

@@ -270,7 +270,8 @@ export class ChatView extends ItemView {
 			role: 'assistant',
 			content: '',
 			timestamp: Date.now(),
-			isStreaming: true
+			isStreaming: true,
+			userQuestion: content // 保存用户的问题用于生成标题
 		};
 		this.appendMessageToUI(assistantMessage);
 
@@ -398,9 +399,24 @@ export class ChatView extends ItemView {
 			messageEl.addClass('streaming');
 		}
 
-		// 为AI消息添加复制按钮
+		// 为AI消息添加标题栏和复制按钮
 		if (message.role === 'assistant') {
-			const copyButton = messageEl.createEl('button', {
+			// 保存用户问题到 data 属性
+			if (message.userQuestion) {
+				messageEl.setAttribute('data-user-question', message.userQuestion);
+			}
+
+			// 标题栏容器
+			const header = messageEl.createDiv('claude-ai-message-header-content');
+
+			// 标题
+			const title = header.createEl('h4', {
+				text: message.isStreaming ? 'Claude AI' : this.generateTitle(message.content, message.userQuestion)
+			});
+			title.addClass('claude-ai-message-title');
+
+			// 复制按钮
+			const copyButton = header.createEl('button', {
 				cls: 'claude-ai-copy-button'
 			});
 			copyButton.type = 'button';
@@ -445,12 +461,150 @@ export class ChatView extends ItemView {
 			this.renderMarkdown(contentEl, content, isStreaming);
 		}
 
+		// 流式输出完成后更新标题
 		if (!isStreaming) {
 			lastMessage.removeClass('streaming');
+
+			const titleEl = lastMessage.querySelector('.claude-ai-message-title') as HTMLElement;
+			if (titleEl) {
+				// 从消息元素获取 userQuestion
+				const userQuestion = lastMessage.getAttribute('data-user-question');
+				titleEl.textContent = this.generateTitle(content, userQuestion || undefined);
+			}
 		}
 
 		// 滚动到底部
 		this.scrollToBottom();
+	}
+
+	/**
+	 * 根据内容生成标题
+	 */
+	private generateTitle(content: string, userQuestion?: string): string {
+		// 如果有用户的问题，优先使用
+		if (userQuestion && userQuestion.trim()) {
+			const question = userQuestion.trim();
+			// 限制标题长度
+			if (question.length <= 25) {
+				return question;
+			}
+			// 如果问题太长，截取关键部分
+			return question.substring(0, 25) + '...';
+		}
+
+		// 去除多余的空白字符
+		const trimmedContent = content.trim();
+
+		// 如果内容为空
+		if (!trimmedContent) {
+			return '回复';
+		}
+
+		// 检测是否包含代码块
+		const codeBlockMatch = trimmedContent.match(/```(\w+)?/);
+		if (codeBlockMatch) {
+			const language = codeBlockMatch[1];
+			return language ? `${language} 代码` : '代码片段';
+		}
+
+		// 检测内容类型并生成标题
+		const lines = trimmedContent.split('\n').filter(line => line.trim());
+
+		// 检查是否有 Markdown 标题
+		const firstLine = lines[0]?.trim();
+		if (firstLine && /^#{1,6}\s/.test(firstLine)) {
+			const title = firstLine.replace(/^#{1,6}\s+/, '').trim();
+			if (title.length <= 20) {
+				return title;
+			}
+		}
+
+		// 分析内容特征
+		const hasList = /^\s*[-*+]\s|^\s*\d+\.\s/m.test(trimmedContent);
+		const hasCode = /`[^`]+`/.test(trimmedContent);
+		const hasSteps = /第[一二三四五六七八九十\d]+[步步]|步骤\d+/i.test(trimmedContent);
+		const hasQuestion = /[？?]$/.test(lines[0] || '');
+		const hasError = /错误|失败|异常|error|exception/i.test(trimmedContent.substring(0, 100));
+		const hasSolution = /解决|修复|方法|方案|可以|应该|建议/i.test(trimmedContent.substring(0, 100));
+
+		// 根据特征生成标题
+		if (hasError && hasSolution) {
+			return '问题解答';
+		}
+
+		if (hasSteps) {
+			return '操作步骤';
+		}
+
+		if (hasList) {
+			const listItems = trimmedContent.match(/^\s*[-*+]\s+.+$/gm) || [];
+			if (listItems.length >= 3) {
+				return '列表清单';
+			}
+			return '说明';
+		}
+
+		if (hasQuestion) {
+			return '问答';
+		}
+
+		// 检查是否是解释性内容
+		const explanatoryKeywords = /是|是指|表示|包括|包含|可以分为|主要|用于|用来|是一种|定义|意思|解释/i;
+		if (explanatoryKeywords.test(trimmedContent.substring(0, 100))) {
+			// 提取关键词作为标题
+			const firstSentence = lines[0] || '';
+			const keywordMatch = firstSentence.match(/(?:什么是|如何|怎么|什么是)(.+?)(?:的|？|\?|$)/);
+			if (keywordMatch) {
+				const keyword = keywordMatch[1].trim();
+				if (keyword.length <= 15) {
+					return keyword + '说明';
+				}
+			}
+			return '说明';
+		}
+
+		// 检查是否是代码相关
+		if (hasCode || /函数|方法|变量|参数|返回|调用/i.test(trimmedContent.substring(0, 100))) {
+			return '代码说明';
+		}
+
+		// 检查是否是配置相关
+		if (/配置|设置|选项|参数|开启|关闭|启用|禁用/i.test(trimmedContent.substring(0, 100))) {
+			return '配置说明';
+		}
+
+		// 检查是否是示例
+		if (/例如|比如|示例|演示|如下/i.test(trimmedContent.substring(0, 100))) {
+			return '示例说明';
+		}
+
+		// 提取第一句话的关键词
+		const firstSentence = (lines[0] || '').trim();
+		if (firstSentence) {
+			// 去除常见的开头词
+			let shortTitle = firstSentence
+				.replace(/^(好的|当然|没问题|我来|让我|根据|按照|以下是|这里|以上|这个)/, '')
+				.replace(/[，,。.!！?？\s]*$/, '')
+				.trim();
+
+			// 如果太长，截取关键部分
+			if (shortTitle.length > 20) {
+				const words = shortTitle.split(/[，,、\s]+/);
+				if (words.length > 0) {
+					shortTitle = words[0].trim();
+					if (shortTitle.length > 15) {
+						shortTitle = shortTitle.substring(0, 15);
+					}
+				}
+			}
+
+			if (shortTitle.length >= 2 && shortTitle.length <= 20) {
+				return shortTitle;
+			}
+		}
+
+		// 默认标题
+		return '回复';
 	}
 
 	/**
