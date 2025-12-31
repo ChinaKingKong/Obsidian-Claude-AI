@@ -3,7 +3,7 @@
   "name": "Claude AI Assistant",
   "version": "0.2.0",
   "minAppVersion": "1.5.0",
-  "description": "在Obsidian中嵌入Claude AI，支持Skills和SubAgent多线程并行处理",
+  "description": "Professional AI assistant in Obsidian with multi-provider support (Claude, GPT, GLM, Qwen, DeepSeek, Kimi), Skills system, and bilingual interface (English/Chinese)",
   "author": "KingKong",
   "authorUrl": "https://github.com/ChinaKingKong",
   "fundingUrl": "https://github.com/ChinaKingKong/Obsidian-Claude-AI",
