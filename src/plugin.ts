@@ -251,6 +251,20 @@ export class ClaudeAIPlugin {
 		return this.manifest;
 	}
 
+	/**
+	 * 打开设置页面
+	 */
+	openSettings() {
+		// 使用 Obsidian 的 setting API 打开设置
+		// @ts-ignore
+		if (this.app.setting) {
+			// @ts-ignore
+			this.app.setting.open();
+			// @ts-ignore
+			this.app.setting.openTabById(this.manifest.id);
+		}
+	}
+
 	// ==================== 设置管理 ====================
 
 	/**

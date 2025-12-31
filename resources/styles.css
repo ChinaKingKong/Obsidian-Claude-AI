@@ -25,6 +25,7 @@
 .claude-ai-header {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	padding: 12px 16px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 	background-color: #ffffff;
@@ -108,6 +109,49 @@
 	height: 6px;
 	border-radius: 50%;
 	background-color: #10b981;
+}
+
+/* 设置按钮 */
+.claude-ai-settings-button {
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: none !important;
+	border-radius: 0;
+	background-color: transparent !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	outline: none !important;
+	color: #f97316;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.15s ease;
+	flex-shrink: 0;
+}
+
+.claude-ai-settings-button svg {
+	width: 18px;
+	height: 18px;
+}
+
+.claude-ai-settings-button:hover {
+	color: #ea580c;
+	transform: scale(1.05);
+	background-color: transparent !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	border: none !important;
+}
+
+.claude-ai-settings-button:active {
+	transform: scale(0.95);
+	color: #c2410c;
+	background-color: transparent !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	border: none !important;
 }
 
 /* ========================================
